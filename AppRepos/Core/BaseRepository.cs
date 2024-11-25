@@ -24,9 +24,7 @@ namespace AppRepos.Core
         public virtual void ChangeTable(string table)
         {
             if (_dbContext.Model.FindEntityType(typeof(TEntity)) is IConventionEntityType relational)
-            {
                 relational.SetTableName(table);
-            }
         }
 
         public void ChangeEntityState(TEntity entity, EntityState state)

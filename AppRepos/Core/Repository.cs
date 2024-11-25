@@ -8,14 +8,24 @@ using System.Threading.Tasks;
 namespace AppRepos.Core
 {
     public interface IRepository<TEntity> :
+        IBaseRepository<TEntity>,
         IQueryRepository<TEntity>,
         ICommandRepository<TEntity>,
-        IPagedRepository<TEntity>,
         IAggregationRepository<TEntity>
         where TEntity : class
     {
-        void ChangeTable(string table);
-        void ChangeEntityState(TEntity entity, EntityState state);
     }
+
+    public class Repository<TEntity> :
+    BaseRepository<TEntity>,
+    QueryRepository<TEntity>,
+    CommandRepository<TEntity>,
+    AggregationRepository<TEntity>,
+    IRepository<TEntity>
+    where TEntity : class
+    {
+        public Repository(DbContext dbContext) : base(dbContext) { }
+    }
+
 
 }
