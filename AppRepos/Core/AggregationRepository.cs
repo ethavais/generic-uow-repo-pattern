@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
 namespace AppRepos.Core
 {
@@ -20,6 +14,18 @@ namespace AppRepos.Core
         Task<T> MinAsync<T>(
             Expression<Func<TEntity, bool>>? predicate = null,
             Expression<Func<TEntity, T>>? selector = null);
+
+        #region Synchronous Version 
+        int Count(Expression<Func<TEntity, bool>>? predicate = null);
+        bool Exists(Expression<Func<TEntity, bool>>? selector = null);
+
+        T Max<T>(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Expression<Func<TEntity, T>>? selector = null);
+        T Min<T>(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Expression<Func<TEntity, T>>? selector = null);
+        #endregion
     }
 
     //public class AggregationRepository<TEntity> : QueryRepository<TEntity>, IAggregationRepository<TEntity> where TEntity : class

@@ -8,7 +8,11 @@ namespace AppRepos
 
         IRepository<TEntity> GetRepository<TEntity>() where TEntity : class;
 
+        #region SaveChanges
         Task<int> SaveChangesAsync();
+
+        int SaveChanges();
+        #endregion
     }
     public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
     {
@@ -38,9 +42,15 @@ namespace AppRepos
             return (IRepository<TEntity>)repositories[type];
         }
 
+        #region SaveChanges
         public async Task<int> SaveChangesAsync()
             => await _context.SaveChangesAsync();
 
+        public int SaveChanges()
+            => _context.SaveChanges();
+        #endregion
+
+        #region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -63,5 +73,6 @@ namespace AppRepos
 
             disposed = true;
         }
+        #endregion
     }
 }

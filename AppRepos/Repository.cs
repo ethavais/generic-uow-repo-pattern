@@ -27,7 +27,7 @@ namespace AppRepos
             _dbSet = _dbContext.Set<TEntity>();
         }
 
-        #region BaseRepository
+        #region Base Repository
         public virtual void ChangeTable(string table)
         {
             if (_dbContext.Model.FindEntityType(typeof(TEntity)) is IConventionEntityType relational)
@@ -41,7 +41,9 @@ namespace AppRepos
             => _dbSet.FromSqlRaw(sql, parameters);
         #endregion
 
-        #region QueryRepository
+
+
+        #region Query Repository
         public IQueryable<TEntity> CoreQuery(
             bool disableTracking = true,
             bool ignoreQueryFilters = false)
@@ -90,11 +92,13 @@ namespace AppRepos
         public virtual Task<TEntity?> FindByKeysAsync(params object[] keysValue)
             => _dbSet.FindAsync(keysValue).AsTask();
 
-        public virtual Task<TEntity?> FindByKeysAsync(object[] keysValues, CancellationToken cancellationToken)
+        public virtual Task<TEntity?> FindByKeysAsync(
+            object[] keysValues, 
+            CancellationToken cancellationToken)
             => _dbSet.FindAsync(keysValues, cancellationToken).AsTask();
         #endregion
 
-        #region CommandRepository
+        #region Command Repository
         public virtual ValueTask<EntityEntry<TEntity>> InsertAsync(
             TEntity entity,
             CancellationToken cancellationToken = default)
@@ -126,7 +130,7 @@ namespace AppRepos
         }
         #endregion
 
-        #region AggregationRepository
+        #region Aggregation Repository
         public async Task<int> CountAsync(Expression<Func<TEntity, bool>>? predicate = null)
         {
             var query = CoreQuery().ApplyPredicate(predicate);
@@ -157,6 +161,70 @@ namespace AppRepos
 
             var query = CoreQuery().ApplyPredicate(predicate);
             return await query.MinAsync(selector);
+        }
+        #endregion
+
+
+
+        #region Query Synchronous
+        public virtual TEntity? FindById(object keyValue)
+            => _dbSet.Find(keyValue);
+
+        public virtual TEntity? FindByKeys(params object[] keysValue)
+            => _dbSet.Find(keysValue);
+
+        public virtual TEntity? FindByKeys(
+            object[] keysValues,
+            CancellationToken cancellationToken)
+        {
+            if (cancellationToken.IsCancellationRequested)
+                throw new OperationCanceledException(cancellationToken);
+
+            return _dbSet.Find(keysValues);
+        }
+
+        #endregion
+
+        #region Command Synchronous
+        public virtual EntityEntry<TEntity> Insert(TEntity entity)
+            => _dbSet.Add(entity);
+
+        public virtual void Insert(IEnumerable<TEntity> entities)
+            => _dbSet.AddRange(entities);
+        #endregion
+
+        #region Aggregation Synchronous 
+        public int Count(Expression<Func<TEntity, bool>>? predicate = null)
+        {
+            var query = CoreQuery().ApplyPredicate(predicate);
+            return query.Count();
+        }
+
+        public bool Exists(Expression<Func<TEntity, bool>>? selector = null)
+        {
+            var query = CoreQuery().ApplyPredicate(selector);
+            return query.Any();
+        }
+
+        public T Max<T>(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Expression<Func<TEntity, T>>? selector = null)
+        {
+            if (selector == null) throw new ArgumentNullException(nameof(selector));
+
+            var query = CoreQuery().ApplyPredicate(predicate);
+            return query.Max(selector);
+
+        }
+
+        public T Min<T>(
+            Expression<Func<TEntity, bool>>? predicate = null,
+            Expression<Func<TEntity, T>>? selector = null)
+        {
+            if (selector == null) throw new ArgumentNullException(nameof(selector));
+
+            var query = CoreQuery().ApplyPredicate(predicate);
+            return query.Min(selector);
         }
         #endregion
     }

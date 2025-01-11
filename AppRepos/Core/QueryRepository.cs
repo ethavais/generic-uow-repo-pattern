@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace AppRepos.Core
@@ -28,6 +27,12 @@ namespace AppRepos.Core
         ValueTask<TEntity?> FindByIdAsync(object keyValue);
         Task<TEntity?> FindByKeysAsync(params object[] keysValue);
         Task<TEntity?> FindByKeysAsync(object[] keysValues, CancellationToken cancellationToken);
+
+        #region Synchronous Version
+        TEntity? FindById(object keyValue);
+        TEntity? FindByKeys(params object[] keysValue);
+        TEntity? FindByKeys(object[] keysValues, CancellationToken cancellationToken);
+        #endregion
     }
 
 

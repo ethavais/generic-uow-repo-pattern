@@ -6,6 +6,7 @@ namespace AppRepos.Core
 {
     public interface ICommandRepository<TEntity> where TEntity : class
     {
+        #region Insert
         ValueTask<EntityEntry<TEntity>> InsertAsync(
             TEntity entity, 
             CancellationToken cancellationToken = default);
@@ -13,12 +14,20 @@ namespace AppRepos.Core
             IEnumerable<TEntity> entities, 
             CancellationToken cancellationToken = default);
 
+        EntityEntry<TEntity> Insert(TEntity entity);
+        void Insert(IEnumerable<TEntity> entities);
+        #endregion
+
+        #region Update
         void Update(TEntity entity);
         void Update(IEnumerable<TEntity> entities);
+        #endregion
 
+        #region Delete
         void Delete(object id);
         void Delete(TEntity entity);
         void Delete(IEnumerable<TEntity> entities);
+        #endregion
     }
 
     //public class CommandRepository<TEntity> : BaseRepository<TEntity>, ICommandRepository<TEntity> where TEntity : class
